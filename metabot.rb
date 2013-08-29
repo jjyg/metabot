@@ -359,7 +359,7 @@ class Metabot
 		else
 			disass=Shellcode.disassemble(Ia32.new, shellcode)
 		end
-		out=disass.instructionblocks.map{|block|
+		out=disass.instructionblocks.sort_by { |block| block.address }.map{|block|
 			((l=disass.get_label_at(block.address)) ? "#{l}: " : '') +
 				block.list.map{|instr|
 				instr.instruction.to_s
