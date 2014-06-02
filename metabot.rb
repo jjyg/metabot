@@ -178,7 +178,7 @@ class Metabot
 			begin
 				parse(recv)
 			rescue Exception
-				puts "[-] loop #{$!}"
+				puts "[-] loop #{$!}", $!.backtrace
 				restart			
 			end
 		end
@@ -268,7 +268,7 @@ class Metabot
 			end
 			t+(quote ? ';' : "\n")
 		}.join
-		return if shellcode.strip.to_a.empty?
+		return if shellcode.strip.empty?
 
 		switched=""
 		case sz
@@ -320,7 +320,7 @@ class Metabot
 	def disassemble(shellcode, sz)
 		shellcode.gsub!('"', '')
 		shellcode.strip!
-		return if shellcode.to_a.empty?
+		return if shellcode.empty?
 		shellcode.gsub!(/(\\x([0-9a-fA-F]{2}))/){|m| [$+].pack('H*')}
 
 		shellcode=EncodedData.new(shellcode, :export=> { 'ep'=> 0 })
@@ -752,7 +752,8 @@ EOS
 
 
 	def run_shellcode(shellcode, sz)
-		return if shellcode.strip!.to_a.empty?
+		shellcode.strip!
+		return if shellcode.empty?
 
 		quote=false
 		shellcode=shellcode.split(';').map{|t|
@@ -761,8 +762,8 @@ EOS
 				quote=quote ? false : true
 			end
 			t+(quote ? ';' : "\n")
-		}.join
-		return if shellcode.to_a.empty?
+		}.join.strip
+		return if shellcode.empty?
 
 		begin
 			case sz
